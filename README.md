@@ -34,12 +34,11 @@ Alternately, you can add the link to the Python interpreter and make the script 
 
 -o <output file> or --output-file <output file>: Specify the filename to use for the saved spreadsheet with the 
 response codes. If not set, the program will use the input filename with "-checked" added before the file extension. 
+On windows, full paths must be used for the output file.
 
 -v or --verbose: Show status messages. If the verbose option is on, the number of links found will be printed, and 
 then each URL tried will be printed, followed by the http response code. This can be useful as a progress report and 
-in case something goes wrong before the output spreadsheet is saved. I have not yet completed all of the error 
-trapping and only a generic error is saved to the spreadsheet. Setting the verbose option will allow you to see the 
-actual error. 
+in case something goes wrong before the output spreadsheet is saved. 
 
 -b or --buy-links: Gather and check the buy links in the book galleries. The default gathers all of the externally 
 linked documents attached to all records. These are the ones set in the individual records instead of uploading a 

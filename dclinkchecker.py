@@ -82,18 +82,27 @@ def check_links(link_list, verbose, timeout):
                 print(status_code)
             response_list.append(status_code)
             # print(response.headers)
-            if i < len(link_list):
+            if i < len(link_list)-1:
                 this_url = urlparse(link_list[i])
                 next_url = urlparse(link_list[i+1])
                 if this_url.hostname == next_url.hostname:
                     delay = random.randint(10, 30)
                     print(f"Waiting for {delay} seconds.")
                     time.sleep(delay)
+        except IndexError:
+            print("Index error. Moving on. Someone should fix the code.")
+        except requests.exceptions.Timeout as err:
+            print(f"Error: {err=}, {type(err)=}, Link {link_list[i]}")
+            response_list.append("Timeout")
+        except requests.exceptions.TooManyRedirects as err:
+            print(f"Error: {err=}, {type(err)=}, Link {link_list[i]}")
+            response_list.append("Too Many Redirects")
+        except requests.exceptions.ConnectionError as err:
+            print(f"Connection Error in Link {link_list[i]}: {err=}")
+            response_list.append("Connection Error-Check URL")
         except Exception as err:
-            # FIXME: Trap specific errors and use appropriate output text
-            if verbose:
-                print(f"Unexpected {err=}, {type(err)=}")
-            response_list.append("Error")
+            print(f"Error: {err=}, {type(err)=}, Link {link_list[i]}")
+            response_list.append("Error-check output")
     return response_list
 
 
@@ -105,8 +114,11 @@ def write_response_spreadsheet(filename, input_table):
     # FIXME: Is there a way to not add the blank line after the headers?
     for r in dataframe_to_rows(input_table, header=True):
         ws.append(r)
-
-    wb.save(filename)
+    try:
+        wb.save(filename)
+    except FileNotFoundError:
+        print("Invalid path or filename. Saving as checked_links.xlsx in current directory.")
+        wb.save("checked_links.xlsx")
 
 
 def check_all_links(input_file, output_file, verbose, buy_links, timeout=10):
